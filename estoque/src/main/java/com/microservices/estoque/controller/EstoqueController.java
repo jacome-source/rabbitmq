@@ -1,0 +1,29 @@
+package com.microservices.estoque.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import constantes.RabbitMQConstantes;
+import dto.EstoqueDTO;
+import com.microservices.estoque.service.RabbitMQService;
+
+@RestController
+@RequestMapping(value="estoque")
+public class EstoqueController {
+
+	@Autowired
+	private RabbitMQService rabbitMQService;
+	
+	@PutMapping
+	private ResponseEntity alterarEstoque(@RequestBody EstoqueDTO estoqueDTO) {
+		System.out.println(estoqueDTO);	
+		rabbitMQService.enviarMensagem(RabbitMQConstantes.FILA_ESTOQUE, estoqueDTO);
+		return new ResponseEntity(HttpStatus.OK);
+	}
+	
+}
